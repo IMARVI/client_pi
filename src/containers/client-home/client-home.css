@@ -1,0 +1,13 @@
+@media all and (min-width: 480px) {
+
+    .workspace{   
+        width: 85%;
+        margin: auto;
+    }
+
+    .graficas{
+        display:inline-block;
+        width: 50%
+    }
+
+}

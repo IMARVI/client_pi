@@ -1,0 +1,19 @@
+@media all and (min-width: 500px) {
+
+    .workspace{   
+        width: 85%;
+        margin: auto;
+        margin-top: 20px;
+    }
+    .datosUsr{
+        display:inline-block;
+        width: 50%;
+        font-size: 1.3em;
+    }
+
+    .datosUsr p{
+        text-align: left;
+        margin-bottom: 7%;
+    }
+
+}
