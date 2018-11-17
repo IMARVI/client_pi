@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Nav,Navbar,NavItem} from "react-bootstrap";
 import { Link } from 'react-router-dom';
 import "./navbar-client.css";
+import {connect} from 'react-redux';
 
 
 class NavbarClient extends Component {
@@ -13,17 +13,11 @@ class NavbarClient extends Component {
 
   logout(event) {
     event.preventDefault();
-    console.log('logging out');
-    this.props.updateUser({
-      loggedIn: false,
-      username: null,
-      redirectTo: null
-    });
+    this.props.loggedOut() 
   }
 
   render() {
-    const loggedIn = this.props.loggedIn;
-    console.log('navbar render, props: ');
+    const loggedIn = this.props.logged;
     console.log(this.props);
     return (
       <div>
@@ -71,5 +65,16 @@ class NavbarClient extends Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    logged: state.logged
+  };
+};
 
-export default NavbarClient;
+const mapDispatchToProps = dispatch =>{
+  return {
+    loggedOut : () => dispatch({type: 'LOGGED_OUT'})
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavbarClient);

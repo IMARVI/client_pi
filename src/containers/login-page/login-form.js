@@ -17,6 +17,7 @@ class LoginForm extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  //Metodo para hacer el double binding
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value,
@@ -33,17 +34,15 @@ class LoginForm extends Component {
         'Content-Type' : 'application/json'
       }
     }
+    
     axios.post('http://el-equipo-perro.mybluemix.net/company/login',datos)
       .then(response => {
         if(response.data.payload === true){
-          this.props.updateUser({
-            loggedIn: true,
-            username: this.state.email,
-          });
-          this.props.
+          this.props.setUser(this.state.email)
+          this.props.loggedIn()
           this.setState({
-            redirectTo: '/home',
-          });
+            redirectTo : '/home'
+          })
         }
       })
       .catch(error => {
@@ -53,12 +52,11 @@ class LoginForm extends Component {
   }
 
   
+  
   render() {
-    console.log("Desde login")
-    console.log(this.state)
-    console.log(this.props)
+    console.log(this.props);
     if (this.state.redirectTo) {
-      return <Redirect to={{ pathname: this.state.redirectTo, state: this.state }} />;
+      return <Redirect to={{ pathname: this.state.redirectTo}} />;
     } else {
     return (
 
@@ -106,13 +104,16 @@ class LoginForm extends Component {
 
 const mapStateToProps = state => {
   return {
-    usr:state.user
+    usr : state.user,
+    pswd : state.password,
+    logged: state.logged
   };
 };
 
 const mapDispatchToProps = dispatch =>{
   return {
-    setUser : () => dispatch({type: 'SET_USR', usr : this.state.user})
+    setUser : (usr) => dispatch({type: 'SET_USR', usr : usr}),
+    loggedIn : () => dispatch({type: 'SET_lOGGED'})
   };
 };
 
