@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { Button, FormGroup, FormControl } from "react-bootstrap";
 import "./login-form.css";
+import { connect } from 'react-redux'
 
 class LoginForm extends Component {
   constructor() {
@@ -24,33 +25,43 @@ class LoginForm extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    
-    axios
-      .post('/user/login', {
-        email: this.state.email,
-        password: this.state.password,
-      })
+    const datos = {
+      user: this.state.email,
+      password : this.state.password,
+      header:{
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type' : 'application/json'
+      }
+    }
+    axios.post('http://el-equipo-perro.mybluemix.net/company/login',datos)
       .then(response => {
-        if (response.status === 200) {
+        if(response.data.payload === true){
           this.props.updateUser({
             loggedIn: true,
-            username: response.data.username,
+            username: this.state.email,
           });
+          this.props.
           this.setState({
-            redirectTo: '/',
+            redirectTo: '/home',
           });
         }
       })
       .catch(error => {
+        console.log("No se encontro el usuario")
         console.error(error);
       });
   }
 
   
-
   render() {
+    console.log("Desde login")
+    console.log(this.state)
+    console.log(this.props)
+    if (this.state.redirectTo) {
+      return <Redirect to={{ pathname: this.state.redirectTo, state: this.state }} />;
+    } else {
     return (
-    
+
       <div className="login">
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="email" className = "form-group" >
@@ -84,8 +95,25 @@ class LoginForm extends Component {
             Iniciar Sesión
           </Button>
         </form>
+        <Button>
+            Registrarse
+        </Button>
       </div>
     );
   }
+  }
 }
-export default LoginForm;
+
+const mapStateToProps = state => {
+  return {
+    usr:state.user
+  };
+};
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    setUser : () => dispatch({type: 'SET_USR', usr : this.state.user})
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

@@ -14,34 +14,24 @@ class NavbarClient extends Component {
   logout(event) {
     event.preventDefault();
     console.log('logging out');
-    axios
-      .post('/user/logout')
-      .then(response => {
-        console.log(response.data);
-        if (response.status === 200) {
-          this.props.updateUser({
-            loggedIn: false,
-            username: null,
-          });
-        }
-      })
-      .catch(error => {
-        console.log('Logout error');
-        console.log(error);
-      });
+    this.props.updateUser({
+      loggedIn: false,
+      username: null,
+      redirectTo: null
+    });
   }
 
   render() {
-    const loggedIn = true;
+    const loggedIn = this.props.loggedIn;
     console.log('navbar render, props: ');
     console.log(this.props);
-
     return (
       <div>
+        {loggedIn ? (
         <Navbar className= 'clientNav' >
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/">
+              <Link to="/home">
                 Logo
               </Link>
             </Navbar.Brand>
@@ -50,7 +40,7 @@ class NavbarClient extends Component {
           <Navbar.Collapse>
             <Nav className='styleNav'>
               <NavItem eventKey={1} href="#" className='itesmNav' >
-                <Link to="/" >
+                <Link to="/home" >
                   Dashboard
                 </Link>
               </NavItem>
@@ -59,21 +49,24 @@ class NavbarClient extends Component {
                   Clients
                 </Link>
               </NavItem>
-              <NavItem eventKey={2} href="#" className='itesmNav' >
+              <NavItem eventKey={3} href="#" className='itesmNav' >
                 <Link to="/ajustes" >
                   Ajustes
                 </Link>
               </NavItem>
             </Nav>
             <Nav pullRight='true' >
-              <NavItem eventKey={2} href="#" >
-                <Link to="/login">
+              <NavItem eventKey={4} href="#" >
+                <Link to="/" onClick={this.logout}>
                   Logout
                 </Link>
               </NavItem>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
+        ):(
+          <div></div>
+        )}
       </div>
     );
   }

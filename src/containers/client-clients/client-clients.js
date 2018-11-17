@@ -10,7 +10,8 @@ class ClientClients extends Component {
             email: '',
             password: '',
             redirectTo: null,
-            data: [{
+            data: 
+            [{
                 nombre: "Isaias",
                 curp: "MAVI910921",
                 nacimiento: "21-09-1991",
@@ -18,12 +19,13 @@ class ClientClients extends Component {
                 telefono: "7717955156",
                 email: "isaiasmarvi@gmail.com",
                 permiso: "true"
-            }, {
+            }, 
+            {
                 nombre: "Isaac Yael",
                 curp: "YACA0902112",
                 nacimiento: "09-03-1996"
             },
-            , {
+            {
                 nombre: "Hector Flores",
                 curp: "FLOR0902112",
                 nacimiento: "09-03-1996"

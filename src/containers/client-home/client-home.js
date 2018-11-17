@@ -13,7 +13,6 @@ class ClientHome extends Component {
         this.state = {
             email: '',
             password: '',
-            redirectTo: null,
             d: [
                 { name: 'Mes 1', uv: 4000, pv: 2400, amt: 2400 },
                 { name: 'Mes 2', uv: 3000, pv: 1398, amt: 2210 },
@@ -43,9 +42,16 @@ class ClientHome extends Component {
 
     }
 
+    componentDidMount() {
+        this.setState({
+            email: this.props.location.state.email,
+            password: this.props.location.state.password
+        })
+    }
 
 
     render() {
+        console.log(this.state)
         return (
             <div>
                 <div className='workspace' >

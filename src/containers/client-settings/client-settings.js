@@ -22,12 +22,13 @@ class ClientSettings extends Component {
                 nombre: "Isaias",
                 permiso: "Administrador",
                 telefono: 7717955156,
-            }, {
+            }, 
+            {
                 nombre: "Isaac Yael",
                 permiso: "Supervisor",
                 telefono: 5518872663
             },
-                , {
+            {
                 nombre: "Hector Flores",
                 permiso: "Administrador",
                 telefono: 7118985321
@@ -48,7 +49,7 @@ class ClientSettings extends Component {
 
                 <div className='workspace' >
                 
-                    <div className='contact' className='datosUsr'>
+                    <div className='datosUsr'>
                         <Image src={image} width='200px' responsive />
                     </div>
 

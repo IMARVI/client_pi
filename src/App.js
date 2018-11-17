@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 //Components
 import './App.css';
@@ -10,28 +9,35 @@ import ClientClients from './containers/client-clients/client-clients'
 import ClientSettings from './containers/client-settings/client-settings'
 import NavbarClient from './components/navbar-client'
 
-
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      loggedIn: true,
+      loggedIn: false,
       username: null,
+      redirectTo: null,
     };
-
+    this.updateUser = this.updateUser.bind(this);
   }
+
+  updateUser(userObject) {
+    this.setState(userObject);
+  }
+
   render() {
-    
     return (
       <div className="App">
-        <NavbarClient/>
-        <Route exact path="/" component={ClientHome} />
-        <Route exact path="/clients" component={ClientClients} />
-        <Route exact path="/ajustes" component={ClientSettings} />
-        <Route exact path="/login" component={LoginForm} />
+        <NavbarClient updateUser={this.updateUser} loggedIn={this.state.loggedIn} />
+        <Switch>
+          <Route path="/" exact render={() => <LoginForm updateUser={this.updateUser} />} />
+          <Route path="/home" component={ClientHome} />
+          <Route path="/clients" component={ClientClients} />
+          <Route path="/ajustes" component={ClientSettings} />
+        </Switch> 
       </div>
     );
   }
+
 }
 
 export default App;
