@@ -5,7 +5,6 @@ const initialSate = {
 
 const reducer = (state = initialSate, action) =>{
   if(action.type === 'SET_USR'){
-    console.log("Dentro de reducer set usr")
     return{
       ...state,
       user : action.usr
