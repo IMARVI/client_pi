@@ -15,10 +15,20 @@
         text-align: left;
         margin-bottom: 7%;
     }
-
-    Form{
+    .formc{
         margin: 0%;
-        padding: 0%
+        padding: 0%;
+        height: 100px;
+    }
+    .formc .form-group{
+        display: inline-block;
+        width: 30%; 
+    }
+    .formc .form-group input{
+        height: auto;
+    }
+    .formc button{
+        margin-left: 20px;
     }
 
 }

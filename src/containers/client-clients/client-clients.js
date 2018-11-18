@@ -4,7 +4,8 @@ import './client-clients.css'
 import '../../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css'
 import { connect } from 'react-redux'
 import axios from 'axios';
-import { Button, FormGroup, FormControl, Form, ControlLabel } from "react-bootstrap";
+import { Button, FormGroup, FormControl, Form } from "react-bootstrap";
+import { Redirect } from 'react-router-dom';
 
 class ClientClients extends Component {
   constructor() {
@@ -100,7 +101,7 @@ class ClientClients extends Component {
   }
 
   handleSubmit(event) {
-    event.preventDefault(); 
+    event.preventDefault();
     const datos = {
       client: this.state.newRFC,
       company: this.props.usr,
@@ -133,37 +134,41 @@ class ClientClients extends Component {
 
 
   render() {
-    return (
-      <div>
-        <Form inline>
-          <FormGroup>
-            <ControlLabel>Nuevo Cliente</ControlLabel>
-            <FormControl
-              name="newRFC"
-              type="text"
-              placeholder="RFC"
-              value={this.state.newRFC}
-              onChange={this.handleChange}
-            />
-          </FormGroup>
-          <Button
-            type="submit"
-            onClick={this.handleSubmit}>
-            Invitar
+    if (this.props.logged) {
+      return (
+        <div>
+          <Form className="formc" >
+            <FormGroup >
+              <FormControl
+                name="newRFC"
+                type="text"
+                placeholder="RFC"
+                value={this.state.newRFC}
+                onChange={this.handleChange}
+              />
+            </FormGroup>
+            <Button
+              className="botonc"
+              type="submit"
+              onClick={this.handleSubmit}>
+              Invitar
                     </Button>
-        </Form>
-        <div className='workspace' >
-          <BootstrapTable data={this.state.usuarios} options={this.options} onChange={this.handleChange}>
-            <TableHeaderColumn dataField='nombres' dataSort>Nombre</TableHeaderColumn>
-            <TableHeaderColumn dataField='rfc' isKey dataSort> RFC</TableHeaderColumn>
-            <TableHeaderColumn dataField='edad' dataSort>Edad</TableHeaderColumn>
-            <TableHeaderColumn dataField='telefono'>Telefono</TableHeaderColumn>
-            <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
-            <TableHeaderColumn dataField='permiso' dataSort>Permiso</TableHeaderColumn>
-          </BootstrapTable>
+          </Form>
+          <div className='workspace' >
+            <BootstrapTable data={this.state.usuarios} options={this.options} onChange={this.handleChange}>
+              <TableHeaderColumn dataField='nombres' dataSort>Nombre</TableHeaderColumn>
+              <TableHeaderColumn dataField='rfc' isKey dataSort> RFC</TableHeaderColumn>
+              <TableHeaderColumn dataField='edad' dataSort filter={ { type: 'TextFilter', delay: 100 } }>Edad</TableHeaderColumn>
+              <TableHeaderColumn dataField='telefono'>Telefono</TableHeaderColumn>
+              <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
+              <TableHeaderColumn dataField='permiso' dataSort filter={ { type: 'TextFilter', delay: 100 } }>Permiso</TableHeaderColumn>
+            </BootstrapTable>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return <Redirect to={{ pathname: '/' }} />
+    }
   }
 }
 

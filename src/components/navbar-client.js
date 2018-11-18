@@ -43,11 +43,13 @@ class NavbarClient extends Component {
                   Clients
                 </Link>
               </NavItem>
-              <NavItem eventKey={3} href="#" className='itesmNav' >
-                <Link to="/ajustes" >
-                  Ajustes
-                </Link>
-              </NavItem>
+              {//
+              //<NavItem eventKey={3} href="#" className='itesmNav' >
+               // <Link to="/ajustes" >
+                //  Ajustes
+                //</Link>
+              //</NavItem>
+              }
             </Nav>
             <Nav pullRight='true' >
               <NavItem eventKey={4} href="#" >
