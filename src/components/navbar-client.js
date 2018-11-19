@@ -18,7 +18,6 @@ class NavbarClient extends Component {
 
   render() {
     const loggedIn = this.props.logged;
-    console.log(this.props);
     return (
       <div>
         {loggedIn ? (

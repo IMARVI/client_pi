@@ -23,77 +23,11 @@ class ClientClients extends Component {
       defaultSortName: 'nombres',  // default sort column name
       defaultSortOrder: 'curp'  // default sort order
     };
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
-  cargarUsuarios() {
-    axios.get('http://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/clients')
-      .then(response => {
-        console.log(response)
-        if (response.status === 200) {
-          const ac = response.data.payload.accepted
-          const re = response.data.payload.rejected
-          const wa = response.data.payload.waiting
-          this.setState({
-            accepted: ac,
-            rejected: re,
-            waiting: wa
-          })
-          this.setState({
-            usuariosRFC: ac.concat(re, wa)
-          })
-          console.log(this.state)
-          this.mapearUsuarios()
-        }
-      })
-      .catch(error => {
-        console.log("Algo ocurrio en la llamada de buscar usuarios")
-        console.error(error);
-      });
-  }
-
-  mapearUsuarios() {
-    console.log("Dentro de mapear ususaro")
-    for (var usr in this.state.usuariosRFC) {
-      axios.get('http://el-equipo-perro.mybluemix.net/client/' + this.state.usuariosRFC[usr])
-        .then(response => {
-          console.log(response.data.payload)
-          if (response.status === 200) {
-            //agregamos el estatus al ususario
-            //console.log(this.state.accepted)
-            //console.log(this.state.waiting.indexOf(response.data.payload['rfc']))
-
-            if (this.state.accepted.indexOf(response.data.payload['rfc']) >= 0) {
-              response.data.payload['permiso'] = "aprobado"
-            }
-            else if (this.state.waiting.indexOf(response.data.payload['rfc']) >= 0) {
-              response.data.payload['permiso'] = "Esperando"
-            }
-            else if (this.state.rejected.indexOf(response.data.payload['rfc']) >= 0) {
-              response.data.payload['permiso'] = "Denegado"
-            }
-
-            //Cargamos al estado con los nuevos valores
-            const aux = this.state.usuarios.slice()
-            aux.push(response.data.payload)
-            this.setState({
-              usuarios: aux
-            })
-          }
-        })
-        .catch(error => {
-          console.log("Algo ocurrio en la llamada de buscar usuarios")
-          console.error(error);
-        });
-    }
-  }
-
-  componentDidMount() {
-    //Aqui mandamos a cargar el estado desde redux
-    this.cargarUsuarios()
-  }
-
+  
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value,
@@ -121,7 +55,7 @@ class ClientClients extends Component {
         }
         else if (response.data.status === 400) {
           this.setState({
-            newRFC: "RFC No existe!"
+            newRFC: "Ocurrio un error"
           })
 
         }
@@ -155,7 +89,7 @@ class ClientClients extends Component {
                     </Button>
           </Form>
           <div className='workspace' >
-            <BootstrapTable data={this.state.usuarios} options={this.options} onChange={this.handleChange}>
+            <BootstrapTable data={this.props.usuarios} options={this.options} onChange={this.handleChange}>
               <TableHeaderColumn dataField='nombres' dataSort>Nombre</TableHeaderColumn>
               <TableHeaderColumn dataField='rfc' isKey dataSort> RFC</TableHeaderColumn>
               <TableHeaderColumn dataField='edad' dataSort filter={ { type: 'TextFilter', delay: 100 } }>Edad</TableHeaderColumn>
@@ -176,7 +110,9 @@ class ClientClients extends Component {
 const mapStateToProps = state => {
   return {
     usr: state.user,
-    logged: state.logged
+    logged: state.logged,
+    usuarios: state.usuariosTodos
   };
 };
+
 export default connect(mapStateToProps)(ClientClients);
