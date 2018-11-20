@@ -1,15 +1,13 @@
 import React, { Component } from "react";
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { Button, FormGroup, FormControl } from "react-bootstrap";
-import "./login-form.css";
-import { connect } from 'react-redux'
 
-class LoginForm extends Component {
+class ClientRegister extends Component {
   constructor() {
     super();
     this.state = {
-      email: '',
+      rfc: '',
       password: '',
       redirectTo: null,
     };
@@ -27,27 +25,28 @@ class LoginForm extends Component {
   handleSubmit(event) {
     event.preventDefault();
     const datos = {
-      user: this.state.email,
-      password: this.state.password,
+      id: this.state.rfc,
+      company: {
+        user: this.state.rfc,
+        password: this.state.password
+      },
       header: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       }
     }
 
-    axios.post('http://el-equipo-perro.mybluemix.net/company/login', datos)
+    axios.post('http://el-equipo-perro.mybluemix.net/company/register', datos)
       .then(response => {
-        console.log(response)
-        if (response.data.payload === true) {
-          this.props.setUser(this.state.email)
-          this.props.loggedIn()
+        console.log(response.data)
+        if (response.data.status === 200) {
           this.setState({
-            redirectTo: '/home'
+            redirectTo: '/'
           })
         }
         else {
           this.setState({
-            email: '',
+            rfc: '',
             password: ''
           })
         }
@@ -58,22 +57,20 @@ class LoginForm extends Component {
       });
   }
 
-
-
   render() {
     if (this.state.redirectTo) {
-      return <Redirect to={{ pathname: this.state.redirectTo }} />;
+      console.log("A punto de redirigir")
+      return <Redirect to={{ pathname: '/'}} />;
     } else {
       return (
         <div className="login">
           <form onSubmit={this.handleSubmit}>
-            <FormGroup controlId="email" className="form-group" >
+            <FormGroup controlId="rfc" className="form-group" >
               <FormControl
-                name="email"
-                type="email"
+                name="rfc"
                 value={this.state.email}
                 onChange={this.handleChange}
-                placeholder="Correo"
+                placeholder="RFC Empresa"
                 className="box"
               />
             </FormGroup>
@@ -95,31 +92,13 @@ class LoginForm extends Component {
               type="submit"
               onClick={this.handleSubmit}
             >
-              Iniciar Sesión
+              Registrar Empresa
           </Button>
           </form>
-          <Link to="/register" >
-            Registrarse
-          </Link>
         </div>
       );
     }
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    usr: state.user,
-    pswd: state.password,
-    logged: state.logged
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    setUser: (usr) => dispatch({ type: 'SET_USR', usr: usr }),
-    loggedIn: () => dispatch({ type: 'SET_lOGGED' })
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default ClientRegister;

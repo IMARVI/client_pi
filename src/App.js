@@ -7,6 +7,8 @@ import LoginForm from './containers/login-page/login-form'
 import ClientHome from './containers/client-home/client-home'
 import ClientClients from './containers/client-clients/client-clients'
 import ClientSettings from './containers/client-settings/client-settings'
+import ClientRegister from './containers/client-register/client-register'
+
 import NavbarClient from './components/navbar-client'
 
 class App extends Component {
@@ -33,6 +35,7 @@ class App extends Component {
           <Route path="/home" component={ClientHome} />
           <Route path="/clients" component={ClientClients} />
           <Route path="/ajustes" component={ClientSettings} />
+          <Route path="/register" component={ClientRegister} />
         </Switch> 
       </div>
     );

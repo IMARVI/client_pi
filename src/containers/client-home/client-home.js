@@ -86,14 +86,14 @@ class ClientHome extends Component {
                 break
               }
             }
-            for(var x in this.state.waiting){
-              if (this.state.waiting[x]['client'] === response.data.payload['rfc'] ){
+            for(var y in this.state.waiting){
+              if (this.state.waiting[y]['client'] === response.data.payload['rfc'] ){
                 response.data.payload['permiso'] = "Esperando"
                 break
               }
             }
-            for(var x in this.state.rejected){
-              if (this.state.rejected[x]['client'] === response.data.payload['rfc'] ){
+            for(var z in this.state.rejected){
+              if (this.state.rejected[z]['client'] === response.data.payload['rfc'] ){
                 response.data.payload['permiso'] = "Denegado"
                 break
               }
@@ -116,6 +116,13 @@ class ClientHome extends Component {
   componentDidMount() {
     this.cargarUsuarios()
   }
+
+  //---------------------------------------------------------- Logica BI
+  
+
+
+  //---------------------------------------------------------- Logica BI
+
 
 
   render() {
