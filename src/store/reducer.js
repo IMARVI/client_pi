@@ -25,7 +25,6 @@ const reducer = (state = initialSate, action) =>{
     }
   }
   if(action.type === 'SET_USUARIOS'){
-    console.log(action.usuariosTodos)
     return{
       ...state,
       usuariosTodos : action.usuariosTodos

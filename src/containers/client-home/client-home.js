@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Radar,RadarChart,PolarAngleAxis,PolarGrid,PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, BarChart,
-  Bar, Radar, RadarChart, PolarAngleAxis, PolarGrid,
-  PolarRadiusAxis, Scatter, ScatterChart, ZAxis
+  Bar, Pie, PieChart, Scatter, ScatterChart, Cell
 } from 'recharts';
 import './client-home.css'
 import { connect } from 'react-redux'
@@ -18,35 +17,16 @@ class ClientHome extends Component {
     this.state = {
       newRFC: "",
       accepted: [],
-      rejected: [],
+      datos: {},
       waiting: [],
       usuariosRFC: [],
       usuarios: [],
-      d: [
-        { name: 'Mes 1', uv: 4000, pv: 2400, amt: 2400 },
-        { name: 'Mes 2', uv: 3000, pv: 1398, amt: 2210 },
-        { name: 'Mes 3', uv: 2000, pv: 9800, amt: 2290 },
-        { name: 'Mes 4', uv: 2780, pv: 3908, amt: 2000 },
-        { name: 'Mes 5', uv: 1890, pv: 4800, amt: 2181 },
-        { name: 'Mes 6', uv: 2390, pv: 3800, amt: 2500 },
-        { name: 'Mes 7', uv: 3490, pv: 4300, amt: 2100 },
-      ],
-      d2: [
-        { subject: 'Math', A: 120, B: 110, fullMark: 150 },
-        { subject: 'Chinese', A: 98, B: 130, fullMark: 150 },
-        { subject: 'English', A: 86, B: 130, fullMark: 150 },
-        { subject: 'Geography', A: 99, B: 100, fullMark: 150 },
-        { subject: 'Physics', A: 85, B: 90, fullMark: 150 },
-        { subject: 'History', A: 65, B: 85, fullMark: 150 },
-        { subject: 'Computer', A: 120, B: 110, fullMark: 150 },
-      ],
-      d3: [{ x: 100, y: 200, z: 200 }, { x: 120, y: 100, z: 260 },
-      { x: 170, y: 300, z: 400 }, { x: 140, y: 250, z: 280 },
-      { x: 150, y: 400, z: 500 }, { x: 110, y: 280, z: 200 }],
-
-      d4: [{ x: 200, y: 260, z: 240 }, { x: 240, y: 290, z: 220 },
-      { x: 190, y: 290, z: 250 }, { x: 198, y: 250, z: 210 },
-      { x: 180, y: 280, z: 260 }, { x: 210, y: 220, z: 230 }],
+      COLORS: ['#2eb82e', '#FF8000', '#FF8042'],
+      RADIAN: Math.PI / 180,
+      d: [],
+      d1: [],
+      d3: [],
+      d4: []
     };
 
   }
@@ -56,18 +36,18 @@ class ClientHome extends Component {
       .then(response => {
         if (response.status === 200) {
           const ac = response.data.payload.accepted
-          const re = response.data.payload.rejected
           const wa = response.data.payload.waiting
           this.setState({
             accepted: ac,
-            rejected: re,
             waiting: wa
           })
           this.setState({
-            usuariosRFC: ac.concat(re, wa)
+            usuariosRFC: ac.concat(wa)
           })
+          this.calcularDatos()
           this.mapearUsuarios()
-        }
+          this.calcularDatos()
+        }5
       })
       .catch(error => {
         console.error(error);
@@ -79,32 +59,27 @@ class ClientHome extends Component {
       axios.get('http://el-equipo-perro.mybluemix.net/client/' + this.state.usuariosRFC[usr]['client'])
         .then(response => {
           if (response.status === 200) {
-
-            for(var x in this.state.accepted){
-              if (this.state.accepted[x]['client'] === response.data.payload['rfc'] ){
-                response.data.payload['permiso'] = "aprobado"
+            for (var x in this.state.accepted) {
+              if (this.state.accepted[x]['client'] === response.data.payload['rfc']) {
+                response.data.payload['permiso'] = "Aprobado"
                 break
               }
             }
-            for(var y in this.state.waiting){
-              if (this.state.waiting[y]['client'] === response.data.payload['rfc'] ){
+            for (var y in this.state.waiting) {
+              if (this.state.waiting[y]['client'] === response.data.payload['rfc']) {
                 response.data.payload['permiso'] = "Esperando"
                 break
               }
             }
-            for(var z in this.state.rejected){
-              if (this.state.rejected[z]['client'] === response.data.payload['rfc'] ){
-                response.data.payload['permiso'] = "Denegado"
-                break
-              }
-            }
-            //Cargamos al estado con los nuevos valores
             const aux = this.state.usuarios.slice()
             aux.push(response.data.payload)
             this.setState({
               usuarios: aux
             })
             this.props.setUsuarios(this.state.usuarios)
+            this.calularCantidadEdad()
+            this.calcularStatus()
+            this.calcularAceptacionTiempo()
           }
         })
         .catch(error => {
@@ -118,15 +93,169 @@ class ClientHome extends Component {
   }
 
   //---------------------------------------------------------- Logica BI
-  
+  calularCantidadEdad() {
+    let uno = 0, dos = 0, tres = 0, cuatro = 0, cinco = 0, seis = 0, siete = 0, ocho = 0, nueve = 0, diez = 0;
+    for (var x in this.state.usuarios) {
+      const edad = parseInt(this.state.usuarios[x]['edad'])
+      if (edad < 20) {
+        uno += 1
+      }
+      else if (edad < 30) {
+        dos += 1
+      } else if (edad < 40) {
+        tres += 1
+      } else if (edad < 50) {
+        cuatro += 1
+      } else if (edad < 60) {
+        cinco += 1
+      } else if (edad < 70) {
+        seis += 1
+      } else if (edad < 80) {
+        siete += 1
+      } else if (edad < 90) {
+        ocho += 1
+      } else if (edad < 100) {
+        nueve += 1
+      }
+    }
+    this.setState(
+      {
+        d4: [
+          { x: 10, y: uno },
+          { x: 20, y: dos },
+          { x: 30, y: tres },
+          { x: 40, y: cuatro },
+          { x: 50, y: cinco },
+          { x: 60, y: seis },
+          { x: 70, y: siete },
+          { x: 80, y: ocho },
+          { x: 90, y: nueve },
+          { x: 100, y: diez }]
+      }
+    )
 
+  }
+
+  calcularStatus() {
+    this.setState(
+      {
+        d3: [
+          { name: 'Aceptados', value: this.state.accepted.length },
+          { name: 'Esperando', value: this.state.waiting.length }
+        ]
+      }
+    )
+  }
+
+  calcularAceptacionTiempo() {
+    let ene = 0, feb = 0, mar = 0, abr = 0, may = 0, jun = 0, jul = 0, ago = 0, sep = 0, oct = 0, nov = 0, dic = 0;
+    let ene2 = 0, feb2 = 0, mar2 = 0, abr2 = 0, may2 = 0, jun2 = 0, jul2 = 0, ago2 = 0, sep2 = 0, oct2 = 0, nov2 = 0, dic2 = 0;
+    // guardamos los usuarios por mes
+    //{ name: 'Mes 1', Creados: 4000, Aceptados: 2400, amt: 2400 }
+    for (var x in this.state.usuariosRFC) {
+      let fechaCreacion = this.state.usuariosRFC[x]['created']
+      let fechaModif = this.state.usuariosRFC[x]['modified']
+
+      let mesCreacion = new Date(fechaCreacion).getMonth()
+      let mesModif = -1
+
+      if (fechaModif !== undefined) {
+        mesModif = new Date(fechaCreacion).getMonth()
+      }
+      //poblamos el arreglo de fechas nuevas
+      if (mesCreacion === 0) { ene += 1 }
+      else if (mesCreacion === 1) { feb += 1 }
+      else if (mesCreacion === 2) { mar += 1 }
+      else if (mesCreacion === 3) { abr += 1 }
+      else if (mesCreacion === 4) { may += 1 }
+      else if (mesCreacion === 5) { jun += 1 }
+      else if (mesCreacion === 6) { jul += 1 }
+      else if (mesCreacion === 7) { ago += 1 }
+      else if (mesCreacion === 8) { sep += 1 }
+      else if (mesCreacion === 9) { oct += 1 }
+      else if (mesCreacion === 10) { nov += 1 }
+      else if (mesCreacion === 11) { dic += 1 }
+
+      if (mesModif === 0) { ene2 += 1 }
+      else if (mesModif === 1) { feb2 += 1 }
+      else if (mesModif === 2) { mar2 += 1 }
+      else if (mesModif === 3) { abr2 += 1 }
+      else if (mesModif === 4) { may2 += 1 }
+      else if (mesModif === 5) { jun2 += 1 }
+      else if (mesModif === 6) { jul2 += 1 }
+      else if (mesModif === 7) { ago2 += 1 }
+      else if (mesModif === 8) { sep2 += 1 }
+      else if (mesModif === 9) { oct2 += 1 }
+      else if (mesModif === 10) { nov2 += 1 }
+      else if (mesModif === 11) { dic2 += 1 }
+    }
+    this.setState({
+      d: [
+        { name: 'Ene', Aceptados: ene2, Creados: ene },
+        { name: 'Feb', Aceptados: feb2, Creados: feb },
+        { name: 'Mar', Aceptados: mar2, Creados: mar },
+        { name: 'Abr', Aceptados: abr2, Creados: abr },
+        { name: 'May', Aceptados: may2, Creados: may },
+        { name: 'Jun', Aceptados: jun2, Creados: jun },
+        { name: 'Jul', Aceptados: jul2, Creados: jul },
+        { name: 'Ago', Aceptados: ago2, Creados: ago },
+        { name: 'Sep', Aceptados: sep2, Creados: sep },
+        { name: 'Oct', Aceptados: oct2, Creados: oct },
+        { name: 'Nov', Aceptados: nov2, Creados: nov },
+        { name: 'Dic', Aceptados: dic2, Creados: dic }
+      ]
+    })
+    this.generarProductos()
+  }
+
+  calcularDatos() {
+    let datos = {}
+
+    for (var usr in this.state.usuariosRFC) {
+      axios.get('http://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/client/' + this.state.usuariosRFC[usr]['client'])
+        .then(response => {
+          if (response.data.payload.terceros[this.props.usr]!== undefined){
+            if (datos[response.data.payload.terceros[this.props.usr]['porducto']] === undefined){
+              datos[response.data.payload.terceros[this.props.usr]['porducto']] = 1
+            }else{
+              let aux = datos[response.data.payload.terceros[this.props.usr]['porducto']]
+              aux+=1
+              datos[response.data.payload.terceros[this.props.usr]['porducto']] = aux
+            }
+          }
+          this.setState({
+            datos: datos
+          })
+        }).then()
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  }
+
+  generarProductos(){
+    let datos = this.state.datos
+    let aux = []
+    console.log(datos)
+    for(var key in datos){
+      let obj = {
+        producto : key,
+        A : datos[key]
+      }
+      console.log(obj)
+      aux.push(obj)
+    }
+    this.setState({
+      d1: aux
+    })
+  }
 
   //---------------------------------------------------------- Logica BI
 
 
 
   render() {
-    //console.log(this.state)
+    console.log(this.state)
     //console.log(this.props)
     if (this.props.logged) {
       return (
@@ -134,54 +263,53 @@ class ClientHome extends Component {
           <div className='workspace' >
             <div className="graficas">
               <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
-                <LineChart data={this.state.d}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                  <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="graficas">
-              <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
-                <BarChart data={this.state.d}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="pv" fill="#8884d8" />
-                  <Bar dataKey="uv" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="graficas">
-              <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
-                <RadarChart outerRadius={90} data={this.state.d2}>
+                <RadarChart outerRadius={130} data={this.state.d1}>
                   <PolarGrid />
-                  <PolarAngleAxis dataKey="subject" />
-                  <PolarRadiusAxis angle={30} domain={[0, 150]} />
-                  <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                  <Radar name="Lily" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-                  <Legend />
+                  <PolarAngleAxis dataKey="producto" />
+                  <PolarRadiusAxis />
+                  <Radar name="Productos" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
             <div className="graficas">
               <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
-                <ScatterChart margin={{ top: 20, right: 20, bottom: 10, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="x" name="stature" unit="cm" />
-                  <YAxis dataKey="y" name="weight" unit="kg" />
-                  <ZAxis dataKey="z" range={[64, 144]} name="score" unit="km" />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                <BarChart data={this.state.d}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
                   <Legend />
-                  <Scatter name="A school" data={this.state.d3} fill="#8884d8" />
-                  <Scatter name="B school" data={this.state.d4} fill="#82ca9d" />
+                  <Bar dataKey="Creados" fill="#82ca9d" />
+                  <Bar dataKey="Aceptados" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="graficas">
+              <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
+                <PieChart >
+                  <Pie
+                    data={this.state.d3}
+                    dataKey='value'
+                    labelLine={true}
+                    label
+                    outerRadius={130}
+                    fill="#8884d8"
+                  >
+                    {
+                      this.state.d3.map((entry, index) => <Cell key={index} fill={this.state.COLORS[index % this.state.COLORS.length]} />)
+                    }
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="graficas">
+              <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
+                <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                  <CartesianGrid />
+                  <XAxis dataKey={'x'} type="number" name='Edad' />
+                  <YAxis dataKey={'y'} type="number" name='Total' />
+                  <Scatter name='A school' data={this.state.d4} fill='#8884d8' />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
@@ -210,5 +338,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-
-export default connect(mapStateToProps,mapDispatchToProps)(ClientHome);
+export default connect(mapStateToProps, mapDispatchToProps)(ClientHome);
