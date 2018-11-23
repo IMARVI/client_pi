@@ -35,7 +35,7 @@ class LoginForm extends Component {
       }
     }
 
-    axios.post('http://el-equipo-perro.mybluemix.net/company/login', datos)
+    axios.post('https://el-equipo-perro.mybluemix.net/company/login', datos)
       .then(response => {
         console.log(response)
         if (response.data.payload === true) {

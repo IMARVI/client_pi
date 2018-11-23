@@ -36,7 +36,7 @@ class ClientRegister extends Component {
       }
     }
 
-    axios.post('http://el-equipo-perro.mybluemix.net/company/register', datos)
+    axios.post('https://el-equipo-perro.mybluemix.net/company/register', datos)
       .then(response => {
         console.log(response.data)
         if (response.data.status === 200) {

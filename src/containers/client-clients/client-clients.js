@@ -44,7 +44,7 @@ class ClientClients extends Component {
         'Content-Type': 'application/json'
       }
     }
-    axios.post('http://el-equipo-perro.mybluemix.net/company/request/access', datos)
+    axios.post('https://el-equipo-perro.mybluemix.net/company/request/access', datos)
       .then(response => {
         console.log(response)
         if (response.data.status === 200) {

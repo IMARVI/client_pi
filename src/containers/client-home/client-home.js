@@ -32,7 +32,7 @@ class ClientHome extends Component {
   }
 
   cargarUsuarios() {
-    axios.get('http://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/clients')
+    axios.get('https://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/clients')
       .then(response => {
         if (response.status === 200) {
           const ac = response.data.payload.accepted
@@ -56,7 +56,7 @@ class ClientHome extends Component {
 
   mapearUsuarios() {
     for (var usr in this.state.usuariosRFC) {
-      axios.get('http://el-equipo-perro.mybluemix.net/client/' + this.state.usuariosRFC[usr]['client'])
+      axios.get('https://el-equipo-perro.mybluemix.net/client/' + this.state.usuariosRFC[usr]['client'])
         .then(response => {
           if (response.status === 200) {
             for (var x in this.state.accepted) {
@@ -212,7 +212,7 @@ class ClientHome extends Component {
     let datos = {}
 
     for (var usr in this.state.usuariosRFC) {
-      axios.get('http://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/client/' + this.state.usuariosRFC[usr]['client'])
+      axios.get('https://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/client/' + this.state.usuariosRFC[usr]['client'])
         .then(response => {
           if (response.data.payload.terceros[this.props.usr]!== undefined){
             if (datos[response.data.payload.terceros[this.props.usr]['porducto']] === undefined){
