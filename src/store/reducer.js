@@ -1,7 +1,8 @@
 const initialSate = {
   user : "",
   logged : false,
-  usuariosTodos : []
+  usuariosTodos : [],
+  usrdatos: ""
 }
 
 const reducer = (state = initialSate, action) =>{
@@ -28,6 +29,12 @@ const reducer = (state = initialSate, action) =>{
     return{
       ...state,
       usuariosTodos : action.usuariosTodos
+    }
+  }
+  if(action.type === 'SET_DATOS'){
+    return{
+      ...state,
+      usrdatos : action.usrdatos
     }
   }
   return state
