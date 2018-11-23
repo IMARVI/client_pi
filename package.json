@@ -2,6 +2,10 @@
   "name": "user_bc",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "npm": "6.4.1",
+    "node": "10.13.0"
+  },
   "dependencies": {
     "@material-ui/core": "^3.0.3",
     "axios": "^0.18.0",
