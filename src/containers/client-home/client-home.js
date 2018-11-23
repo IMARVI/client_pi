@@ -215,12 +215,12 @@ class ClientHome extends Component {
       axios.get('https://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/client/' + this.state.usuariosRFC[usr]['client'])
         .then(response => {
           if (response.data.payload.terceros[this.props.usr]!== undefined){
-            if (datos[response.data.payload.terceros[this.props.usr]['porducto']] === undefined){
-              datos[response.data.payload.terceros[this.props.usr]['porducto']] = 1
+            if (datos[response.data.payload.terceros[this.props.usr]['producto']] === undefined){
+              datos[response.data.payload.terceros[this.props.usr]['producto']] = 1
             }else{
-              let aux = datos[response.data.payload.terceros[this.props.usr]['porducto']]
+              let aux = datos[response.data.payload.terceros[this.props.usr]['producto']]
               aux+=1
-              datos[response.data.payload.terceros[this.props.usr]['porducto']] = aux
+              datos[response.data.payload.terceros[this.props.usr]['producto']] = aux
             }
           }
           this.setState({
