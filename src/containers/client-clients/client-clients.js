@@ -165,13 +165,13 @@ class ClientClients extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title id="contained-modal-title">
-                Contained Modal
+                Agregar Datos
             </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <form horizontal="true" >
                 <FormGroup>
-                  <ControlLabel>Datos extras</ControlLabel>
+                  <ControlLabel>Ingresar llave/valor</ControlLabel>
                   <FormControl
                     name="llave"
                     type="text"
