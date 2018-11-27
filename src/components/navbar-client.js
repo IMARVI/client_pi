@@ -32,26 +32,19 @@ class NavbarClient extends Component {
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav className='styleNav'>
-              <NavItem eventKey={1} href="#" className='itesmNav' >
+              <NavItem eventKey={1} className='itesmNav' >
                 <Link to="/home" >
                   Dashboard
                 </Link>
               </NavItem>
-              <NavItem eventKey={2} href="#" className='itesmNav' >
+              <NavItem eventKey={2} className='itesmNav' >
                 <Link to="/clients" >
                   Clients
                 </Link>
               </NavItem>
-              {//
-              //<NavItem eventKey={3} href="#" className='itesmNav' >
-               // <Link to="/ajustes" >
-                //  Ajustes
-                //</Link>
-              //</NavItem>
-              }
             </Nav>
-            <Nav pullRight='true' >
-              <NavItem eventKey={4} href="#" >
+            <Nav pullRight={true} >
+              <NavItem eventKey={4} >
                 <Link to="/" onClick={this.logout}>
                   Logout
                 </Link>

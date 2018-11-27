@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import {
-  Radar,RadarChart,PolarAngleAxis,PolarGrid,PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
+  Radar, RadarChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, BarChart,
   Bar, Pie, PieChart, Scatter, ScatterChart, Cell
 } from 'recharts';
 import './client-home.css'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom';
-import axios from 'axios';
+import { ApiService } from "../../components/ApiServices";
+import { isString } from "util";
 
 
 
@@ -28,75 +29,52 @@ class ClientHome extends Component {
       d3: [],
       d4: []
     };
-
+    this.apiService = new ApiService();
   }
 
   cargarUsuarios() {
-    axios.get('https://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/clients')
-      .then(response => {
-        if (response.status === 200) {
-          const ac = response.data.payload.accepted
-          const wa = response.data.payload.waiting
-          this.setState({
-            accepted: ac,
-            waiting: wa
-          })
-          this.setState({
-            usuariosRFC: ac.concat(wa)
-          })
-          this.calcularDatos()
-          this.mapearUsuarios()
-          this.calcularDatos()
-        }5
-      })
+    this.apiService.get({
+      url: "/company/" + this.props.usr + "/clients",
+    }).then(response => {
+      if (response.status === 200) {
+        const ac = response.payload.allowed;
+        const wa = response.payload.waiting;
+        this.setState({
+          accepted: ac,
+          waiting: wa,
+          usuariosRFC: ac.concat(wa)
+        });
+        this.calcularDatos()
+        this.calularCantidadEdad()
+        this.calcularStatus()
+        this.calcularAceptacionTiempo()
+        this.parsearUsuarios()
+      }
+    })
       .catch(error => {
         console.error(error);
       });
   }
 
-  mapearUsuarios() {
-    for (var usr in this.state.usuariosRFC) {
-      axios.get('https://el-equipo-perro.mybluemix.net/client/' + this.state.usuariosRFC[usr]['client'])
-        .then(response => {
-          if (response.status === 200) {
-            for (var x in this.state.accepted) {
-              if (this.state.accepted[x]['client'] === response.data.payload['rfc']) {
-                response.data.payload['permiso'] = "Aprobado"
-                break
-              }
-            }
-            for (var y in this.state.waiting) {
-              if (this.state.waiting[y]['client'] === response.data.payload['rfc']) {
-                response.data.payload['permiso'] = "Esperando"
-                break
-              }
-            }
-            const aux = this.state.usuarios.slice()
-            aux.push(response.data.payload)
-            this.setState({
-              usuarios: aux
-            })
-            this.props.setUsuarios(this.state.usuarios)
-            this.calularCantidadEdad()
-            this.calcularStatus()
-            this.calcularAceptacionTiempo()
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
+  componentDidMount() {
+    if (this.props.usr) {
+      this.cargarUsuarios()
     }
   }
 
-  componentDidMount() {
-    this.cargarUsuarios()
+  //---------------------------------------------------------- Logica BI
+  parsearUsuarios(){
+    let x = []
+    for(var usr in this.state.accepted){
+      x.push(this.state.accepted[usr]['client'])
+    }
+    this.props.setUsuarios(x)
   }
 
-  //---------------------------------------------------------- Logica BI
   calularCantidadEdad() {
     let uno = 0, dos = 0, tres = 0, cuatro = 0, cinco = 0, seis = 0, siete = 0, ocho = 0, nueve = 0, diez = 0;
-    for (var x in this.state.usuarios) {
-      const edad = parseInt(this.state.usuarios[x]['edad'])
+    for (var x in this.state.accepted) {
+      const edad = parseInt(this.state.accepted[x]['client'].edad, 10);
       if (edad < 20) {
         uno += 1
       }
@@ -154,12 +132,12 @@ class ClientHome extends Component {
     //{ name: 'Mes 1', Creados: 4000, Aceptados: 2400, amt: 2400 }
     for (var x in this.state.usuariosRFC) {
       let fechaCreacion = this.state.usuariosRFC[x]['created']
-      let fechaModif = this.state.usuariosRFC[x]['modified']
+      let fechaModif = this.state.usuariosRFC[x]['client']
 
       let mesCreacion = new Date(fechaCreacion).getMonth()
       let mesModif = -1
 
-      if (fechaModif !== undefined) {
+      if ( !isString(fechaModif)) {
         mesModif = new Date(fechaCreacion).getMonth()
       }
       //poblamos el arreglo de fechas nuevas
@@ -210,39 +188,31 @@ class ClientHome extends Component {
 
   calcularDatos() {
     let datos = {}
-
-    for (var usr in this.state.usuariosRFC) {
-      axios.get('https://el-equipo-perro.mybluemix.net/company/' + this.props.usr + '/client/' + this.state.usuariosRFC[usr]['client'])
-        .then(response => {
-          if (response.data.payload.terceros[this.props.usr]!== undefined){
-            if (datos[response.data.payload.terceros[this.props.usr]['producto']] === undefined){
-              datos[response.data.payload.terceros[this.props.usr]['producto']] = 1
-            }else{
-              let aux = datos[response.data.payload.terceros[this.props.usr]['producto']]
-              aux+=1
-              datos[response.data.payload.terceros[this.props.usr]['producto']] = aux
-            }
-          }
-          this.setState({
-            datos: datos
-          })
-        }).then()
-        .catch(error => {
-          console.error(error);
-        });
+    for (var usr in this.state.accepted) {
+      if (this.state.accepted[usr]['client'] !== undefined) {
+        if (datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']] === undefined) {
+          datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']] = 1
+        } else {
+          let aux = datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']]
+          aux += 1
+          datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']] = aux
+        }
+      }
     }
+    this.setState({
+      datos: datos
+    })
   }
 
-  generarProductos(){
+  generarProductos() {
     let datos = this.state.datos
     let aux = []
-    console.log(datos)
-    for(var key in datos){
+    for (var key in datos) {
       let obj = {
-        producto : key,
-        A : datos[key]
+        producto: key,
+        A: datos[key]
       }
-      console.log(obj)
+
       aux.push(obj)
     }
     this.setState({
@@ -255,8 +225,8 @@ class ClientHome extends Component {
 
 
   render() {
-    //console.log(this.state)
-    //console.log(this.props)
+    console.log(this.state)
+    console.log(this.props)
     if (this.props.logged) {
       return (
         <div>
@@ -295,7 +265,8 @@ class ClientHome extends Component {
                     fill="#8884d8"
                   >
                     {
-                      this.state.d3.map((entry, index) => <Cell key={index} fill={this.state.COLORS[index % this.state.COLORS.length]} />)
+                      this.state.d3.map((entry, index) =>
+                        <Cell key={index} fill={this.state.COLORS[index % this.state.COLORS.length]} />)
                     }
                   </Pie>
                   <Tooltip />

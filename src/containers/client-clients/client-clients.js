@@ -8,17 +8,6 @@ import { Button, FormGroup, FormControl, Form, ControlLabel, Modal } from "react
 import { Redirect } from 'react-router-dom';
 //import Modal from 'react-modal';
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  }
-};
-
 
 class ClientClients extends Component {
   constructor() {
@@ -199,7 +188,7 @@ class ClientClients extends Component {
           </Modal>
 
           <div className='workspace' >
-            <BootstrapTable data={this.props.usuarios} options={this.options} onChange={this.handleChange}>
+            <BootstrapTable data={this.props.usuarios} pagination options={this.options} onChange={this.handleChange}>
               <TableHeaderColumn dataField='nombres' dataSort>Nombre</TableHeaderColumn>
               <TableHeaderColumn dataField='rfc' isKey dataSort> RFC</TableHeaderColumn>
               <TableHeaderColumn dataField='edad' dataSort filter={{ type: 'TextFilter', delay: 100 }}>Edad</TableHeaderColumn>
