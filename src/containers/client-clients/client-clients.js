@@ -194,7 +194,6 @@ class ClientClients extends Component {
               <TableHeaderColumn dataField='edad' dataSort filter={{ type: 'TextFilter', delay: 100 }}>Edad</TableHeaderColumn>
               <TableHeaderColumn dataField='telefono'>Telefono</TableHeaderColumn>
               <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
-              <TableHeaderColumn dataField='permiso' dataSort filter={{ type: 'TextFilter', delay: 100 }}>Permiso</TableHeaderColumn>
             </BootstrapTable>
           </div>
         </div>

@@ -234,9 +234,10 @@ class ClientHome extends Component {
             <div className="graficas">
               <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
                 <RadarChart outerRadius={130} data={this.state.d1}>
+                  <Tooltip />
                   <PolarGrid />
                   <PolarAngleAxis dataKey="producto" />
-                  <PolarRadiusAxis />
+                  <PolarRadiusAxis angle={90} />
                   <Radar name="Productos" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
                 </RadarChart>
               </ResponsiveContainer>
