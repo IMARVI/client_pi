@@ -8,7 +8,7 @@ import './client-home.css'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom';
 import { ApiService } from "../../components/ApiServices";
-import { isString } from "util";
+import { isString, isUndefined } from "util";
 
 
 
@@ -37,7 +37,8 @@ class ClientHome extends Component {
       url: "/company/" + this.props.usr + "/clients",
     }).then(response => {
       if (response.status === 200) {
-        const ac = response.payload.allowed;
+        console.log(response)
+        const ac = response.payload.approved;
         const wa = response.payload.waiting;
         this.setState({
           accepted: ac,
@@ -63,9 +64,9 @@ class ClientHome extends Component {
   }
 
   //---------------------------------------------------------- Logica BI
-  parsearUsuarios(){
+  parsearUsuarios() {
     let x = []
-    for(var usr in this.state.accepted){
+    for (var usr in this.state.accepted) {
       x.push(this.state.accepted[usr]['client'])
     }
     this.props.setUsuarios(x)
@@ -137,7 +138,7 @@ class ClientHome extends Component {
       let mesCreacion = new Date(fechaCreacion).getMonth()
       let mesModif = -1
 
-      if ( !isString(fechaModif)) {
+      if (!isString(fechaModif)) {
         mesModif = new Date(fechaCreacion).getMonth()
       }
       //poblamos el arreglo de fechas nuevas
@@ -189,7 +190,7 @@ class ClientHome extends Component {
   calcularDatos() {
     let datos = {}
     for (var usr in this.state.accepted) {
-      if (this.state.accepted[usr]['client'] !== undefined) {
+      try{
         if (datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']] === undefined) {
           datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']] = 1
         } else {
@@ -197,6 +198,8 @@ class ClientHome extends Component {
           aux += 1
           datos[this.state.accepted[usr]['client'].terceros[this.props.usr]['producto']] = aux
         }
+      }catch(e){
+        console.log('An error has occurred: '+e.message)
       }
     }
     this.setState({
