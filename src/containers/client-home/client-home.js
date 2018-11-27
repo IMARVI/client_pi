@@ -228,12 +228,17 @@ class ClientHome extends Component {
 
 
   render() {
-    console.log(this.state)
-    console.log(this.props)
+    let aux = true
+    if(this.state.d1.length>0 && this.state.d.length>0 && this.state.d3.length>0){
+      aux = false;
+    }
     if (this.props.logged) {
       return (
         <div>
-          <div className='workspace' >
+          {aux?
+            <div  class="cssload-box-loading"></div>
+            :
+            <div className='workspace' >
             <div className="graficas">
               <ResponsiveContainer minWidth={300} minHeight={300} width="100%" height={300}>
                 <RadarChart outerRadius={130} data={this.state.d1}>
@@ -289,6 +294,7 @@ class ClientHome extends Component {
               </ResponsiveContainer>
             </div>
           </div>
+            }
         </div>
       );
     }
