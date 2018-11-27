@@ -190,7 +190,7 @@ class ClientClients extends Component {
           <div className='workspace' >
             <BootstrapTable data={this.props.usuarios} pagination options={this.options} onChange={this.handleChange}>
               <TableHeaderColumn dataField='nombres' dataSort>Nombre</TableHeaderColumn>
-              <TableHeaderColumn dataField='rfc' isKey dataSort> RFC</TableHeaderColumn>
+              <TableHeaderColumn dataField='rfc' isKey dataSort filter={{ type: 'TextFilter', delay: 100 }}> RFC</TableHeaderColumn>
               <TableHeaderColumn dataField='edad' dataSort filter={{ type: 'TextFilter', delay: 100 }}>Edad</TableHeaderColumn>
               <TableHeaderColumn dataField='telefono'>Telefono</TableHeaderColumn>
               <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
